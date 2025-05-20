@@ -22,41 +22,6 @@ class User(Base):
        self.password = password
 #endregion
 
-#regionUSERDETAIL
-class UserDetail(Base):
-
-   __tablename__ = "userdetails"
-
-   id = Column("id", Integer, primary_key=True)
-   dni = Column("dni", Integer)
-   firstName = Column("firstName", String)
-   lastName = Column("lastName", String)
-   type = Column("type", String)
-   email = Column("email", String(80), nullable=False, unique=True)
-
-
-   def __init__(self, dni, firstName, lastName, type, email):
-       self.dni = dni
-       self.firstName = firstName
-       self.lastName = lastName
-       self.type = type
-       self.email = email
-#endRegion
-
-class Materia(Base):
-   __tablename__ = "materias"
-   id= Column("id", Integer, primary_key=True)
-   nombre=Column("nombre", String)
-   estado=Column("estado", String)
-   user_id=Column("user_id", Integer, ForeignKey(User.id))
-   career_id=Column("carrer_id", Integer, nullable=True)
-   usuario = relationship("User", back_populates="rmateria")
-
-   def __init__(self, nombre, estado, user_id, career_id):
-      self.nombre = nombre
-      self.estado = estado
-      self.user_id = user_id
-      self.career_id = career_id
 
 
 #region PYDANTIC
@@ -69,22 +34,8 @@ class InputUser(BaseModel):
    lastname: str
    type: str
    
-class InputLogin(BaseModel):
-    username: str
-    password: str
 
-class InputUserDetail(BaseModel):
-   dni: int
-   firstName: str
-   lastName: str
-   type: str
-   email: str
 
-class ImputMateria(BaseModel):
-   nombre: str
-   estado: str
-   user_id: int
-   career_id: int
 
 #endregion
 

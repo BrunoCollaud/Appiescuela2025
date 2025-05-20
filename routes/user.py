@@ -1,52 +1,13 @@
 from fastapi import APIRouter
-from models.user import session, InputUser, User, InputLogin, UserDetail, InputUserDetail,ImputMateria,Materia
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
+from models.user import session, InputUser, User
+from models.userdetail import UserDetail, InputLogin, InputUserDetail
 from sqlalchemy.orm import (
    joinedload,
 )
 
 user = APIRouter()
-userDetail = APIRouter()
-materia = APIRouter()
-
-
-@materia.post("/RMateria")
-def ingresar_materia(materia: ImputMateria):
-    try:
-        new_materia = Materia(materia.nombre, materia.estado,materia.user_id,materia.career_id)
-        session.add(new_materia)
-        session.commit()
-        return "materia agregada"
-    except Exception as e:
-       session.rollback()
-       print("Error inesperado:", e)
-       return JSONResponse(
-           status_code=500, content={"detail": "Error al agregar materia"}
-       )
-    finally:
-       session.close()
-
-@materia.get("/misMaterias")
-def consultar_materias():
-    try:
-        materias = session.query(Materia).options(joinedload(Materia.usuario)).all()
-        ver_materias = []
-        for materia in materias:
-            ver_materia = {
-                "id": materia.id,
-                "nombre": materia.nombre,
-                "estado": materia.estado,
-                "user_id": materia.user_id,
-                "career_id": materia.career_id,
-            }
-            ver_materias.append(ver_materia)
-        return JSONResponse(status_code=200, content=ver_materias)
-    except Exception as e:
-        print("Error al obtener materias:", e)
-        return JSONResponse(
-            status_code=500, content={"detail": "Error al obtener materias"}
-        )
 
 @user.get("/users/all")
 def obtener_usuario_detalle():
@@ -115,26 +76,9 @@ def crear_usuario(user: InputUser):
     finally:
        session.close()
 
-
-
 @user.get("/")
 def welcome():
    return "Bienvenido!!"
-
-
-
-
-
-
-@user.get("/users/login/{n}")
-def get_users_id(n: str):
-   try:
-       return session.query(User).filter(User.username == n).first()
-   except Exception as ex:
-       return ex
-
-
-
 
 
 @user.post("/users/loginUser")
@@ -172,23 +116,3 @@ def validate_email(value):
    else:
        return value
 
-
-#region de userDetail
-@userDetail.get("/userdetail/all")
-def get_userDetails():
-   try:
-       return session.query(UserDetail).all()
-   except Exception as e:
-       print(e)
-
-
-@userDetail.post("/userdetail/add")
-def add_usuarDetail(userDet: InputUserDetail):
-   usuNuevo = UserDetail(
-   userDet.dni, userDet.firstName, userDet.lastName, userDet.type,           userDet.email
-   )
-   session.add(usuNuevo)
-   session.commit()
-   return "usuario detail agregado"
-
-#endregion de userDetail

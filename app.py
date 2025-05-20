@@ -1,6 +1,9 @@
 from fastapi import FastAPI
-from routes.user import user, userDetail, materia
+from routes.userdetail import userDetail
+from routes.user import user
+from routes.materias import materia
 from fastapi.middleware.cors import CORSMiddleware
+
 
 
 api_escu = FastAPI()
@@ -17,3 +20,4 @@ api_escu.add_middleware(
    allow_methods=["GET", "POST", "PUT", "DELETE"],
    allow_headers=["*"],
 )
+
